@@ -7,10 +7,8 @@ type AddItemFormType = {
     addNewItem: (title: string) => void
 }
 
-const AddItemForm:FC<AddItemFormType> = ({
-                                             maxLengthUserMessage,
-                                             addNewItem
-}) => {
+const AddItemForm = React.memo( (props: AddItemFormType) => {
+    console.log('AddItemForm')
     const [title, setTitle] = useState<string>("")
     const [error, setError] = useState<boolean>(false)
 
@@ -21,7 +19,7 @@ const AddItemForm:FC<AddItemFormType> = ({
     const addItem = () => {
         const trimmedTitle = title.trim()
         if(trimmedTitle){
-            addNewItem(trimmedTitle)
+            props.addNewItem(trimmedTitle)
         } else {
             setError(true)
         }
@@ -31,7 +29,7 @@ const AddItemForm:FC<AddItemFormType> = ({
     const onKeyDownAddItem = (e: KeyboardEvent<HTMLInputElement>)=> e.key === "Enter" && addItem()
 
     const userErrorMessage = error && <div style={{color: "hotpink"}}>Title is required!</div>
-    const isUserMessageToLong: boolean = title.length > maxLengthUserMessage
+    const isUserMessageToLong: boolean = title.length > props.maxLengthUserMessage
     const isAddBtnDisabled = !title.length || isUserMessageToLong || error
     const userMaxLengthMessage = isUserMessageToLong && <div style={{color: "hotpink"}}>Task title is to long!</div>
     const inputErrorClasses = error || isUserMessageToLong ? "input-error" : ""
@@ -65,6 +63,6 @@ const AddItemForm:FC<AddItemFormType> = ({
             {userErrorMessage}*/}
         </div>
     );
-};
+} );
 
 export default AddItemForm;
