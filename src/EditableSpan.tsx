@@ -1,30 +1,45 @@
-import TextField from '@mui/material/TextField/TextField';
-import React, {ChangeEvent, useState} from 'react';
-
+import React, {ChangeEvent, FC, useState} from 'react';
+import {TextField} from "@mui/material";
 
 type EditableSpanPropsType = {
-    value: string
-    onChange: (newValue: string) => void
+    title: string
+    changeTitle: (title: string) => void
+    spanClasses?: string
+    inputClasses?: string
 }
 
-export function EditableSpan(props: EditableSpanPropsType) {
-    let [editMode, setEditMode] = useState(false);
-    let [title, setTitle] = useState(props.value);
+const EditableSpan: FC<EditableSpanPropsType> = (
+    {
+        title,
+        changeTitle,
+        spanClasses
+    }) => {
 
-    const activateEditMode = () => {
-        setEditMode(true);
-        setTitle(props.value);
+    const [editMode, setEditMode] = useState<boolean>(false)
+    const [localTitle, setLocalTitle] = useState<string>(title)
+    const changeLocalTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        setLocalTitle(e.currentTarget.value)
     }
-    const activateViewMode = () => {
-        setEditMode(false);
-        props.onChange(title);
+    const onEditMode = () => {
+        setEditMode(true)
     }
-    const changeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.currentTarget.value)
+    const offEditMode = () => {
+        setEditMode(false)
+        changeTitle(localTitle)
     }
 
-    return editMode
-        ?    <TextField variant="outlined"
-                        value={title} onChange={changeTitle} autoFocus onBlur={activateViewMode} />
-        : <span onDoubleClick={activateEditMode}>{props.value}</span>
-}
+    return (
+        editMode
+            ? <TextField
+                variant={"standard"}
+                value={localTitle}
+                     onChange={changeLocalTitle}
+                     autoFocus={true}
+                     onBlur={offEditMode}
+            />
+            : <span onDoubleClick={onEditMode}
+                    className={spanClasses}>{title}</span>
+    );
+};
+
+export default EditableSpan;
