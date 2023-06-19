@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FC, useState} from 'react';
+import React, {ChangeEvent, FC, KeyboardEventHandler, useState} from 'react';
 import {TextField} from "@mui/material";
 
 type EditableSpanPropsType = {
@@ -8,24 +8,30 @@ type EditableSpanPropsType = {
     inputClasses?: string
 }
 
-const EditableSpan: FC<EditableSpanPropsType> = (
-    {
-        title,
-        changeTitle,
-        spanClasses
-    }) => {
+const EditableSpan = React.memo((props: EditableSpanPropsType
+) => {
+    console.log("editablespan")
 
     const [editMode, setEditMode] = useState<boolean>(false)
-    const [localTitle, setLocalTitle] = useState<string>(title)
-    const changeLocalTitle = (e: ChangeEvent<HTMLInputElement>) => {
-        setLocalTitle(e.currentTarget.value)
-    }
+    const [localTitle, setLocalTitle] = useState(props.title)
+
     const onEditMode = () => {
         setEditMode(true)
+        setLocalTitle(props.title)
     }
     const offEditMode = () => {
         setEditMode(false)
-        changeTitle(localTitle)
+        props.changeTitle(localTitle)
+    }
+    const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+        if (event.key === 'Enter') {
+            offEditMode();
+        }
+    }
+
+    const changeLocalTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        setLocalTitle(e.currentTarget.value)
+        console.log(localTitle)
     }
 
     return (
@@ -33,13 +39,14 @@ const EditableSpan: FC<EditableSpanPropsType> = (
             ? <TextField
                 variant={"standard"}
                 value={localTitle}
-                     onChange={changeLocalTitle}
-                     autoFocus={true}
-                     onBlur={offEditMode}
+                onChange={changeLocalTitle}
+                autoFocus={true}
+                onBlur={offEditMode}
+                onKeyPress={handleKeyDown}
             />
             : <span onDoubleClick={onEditMode}
-                    className={spanClasses}>{title}</span>
+                    className={props.spanClasses}>{localTitle}</span>
     );
-};
+})
 
 export default EditableSpan;
