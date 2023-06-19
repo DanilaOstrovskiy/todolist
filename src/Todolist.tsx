@@ -1,10 +1,11 @@
-import React, {ChangeEvent, FC, RefObject, useRef, useState, KeyboardEvent} from 'react';
+import React, {ChangeEvent, FC, RefObject, useRef, useState, KeyboardEvent, useCallback} from 'react';
 import TasksList from "./TasksList";
 import {FilterValuesType} from "./App";
 import AddItemForm from "./AddItemForm";
 import EditableSpan from "./EditableSpan";
 import {Button, IconButton, Typography} from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import {Task} from "./Task";
 
 
 type TodoListPropsType = {
@@ -30,15 +31,26 @@ export type TaskType = {
 
 }
 
-const TodoList: FC<TodoListPropsType> = (props) => {
-    const addTask = (title: string) => {
+const TodoList = React.memo( (props:TodoListPropsType) => {
+    const addTask = useCallback((title: string) => {
             props.addTask(title, props.todoListId)
-    }
+    }, [props.addTask, props.todoListId]);
 
     const handlerCreator = (filter: FilterValuesType) => () => props.changeTodoListFilter(props.todoListId, filter)
     const removeTodoList = () => props.removeTodoList(props.todoListId)
     const changeTodoListTitle = (title:string) => props.changeTodoListTitle(title, props.todoListId)
 
+
+
+
+    let tasksForTodolist = props.tasks
+
+    if (props.filter === 'active') {
+        tasksForTodolist = props.tasks.filter(t => t.isDone === false)
+    }
+    if (props.filter === 'completed') {
+        tasksForTodolist = props.tasks.filter(t => t.isDone === true)
+    }
 
     return (
         <div className={"todolist"}>
@@ -55,13 +67,26 @@ const TodoList: FC<TodoListPropsType> = (props) => {
                 </IconButton>
             </Typography>
             <AddItemForm maxLengthUserMessage={15} addNewItem={addTask}/>
-            <TasksList
+{/*            <TasksList
+                filter={props.filter}
                 changeTaskTitle={props.changeTaskTitle}
                 todoListId={props.todoListId}
                 tasks={props.tasks}
                 removeTask={props.removeTask}
                 changeTaskStatus={props.changeTaskStatus}
-            />
+            />*/}
+                <div>                {
+                    tasksForTodolist.map(t => <Task
+                        task={t}
+                        changeTaskStatus={props.changeTaskStatus}
+                        changeTaskTitle={props.changeTaskTitle}
+                        removeTask={props.removeTask}
+                        todolistId={props.todoListId}
+                        key={t.id}
+                    />)
+                }
+                </div>
+
             <div className="filter-btn-container">
                 <Button
                     size={'small'}
@@ -87,6 +112,6 @@ const TodoList: FC<TodoListPropsType> = (props) => {
             </div>
         </div>
     );
-};
+});
 
 export default TodoList;

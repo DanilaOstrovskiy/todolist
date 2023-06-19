@@ -3,6 +3,7 @@ import {TaskType} from "./TodoList";
 import EditableSpan from "./EditableSpan";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {Checkbox, IconButton, List, ListItem} from "@mui/material";
+import {FilterValuesType} from "./App";
 
 type TasksListPropsType = {
     todoListId: string
@@ -10,8 +11,10 @@ type TasksListPropsType = {
     removeTask: (taskId: string, todoListId: string) => void
     changeTaskStatus: (taskId: string, isDone: boolean, todoListId: string) => void
     changeTaskTitle : (taskId: string, newTitle: string, todoListId: string) => void
+    filter: FilterValuesType
 
 }
+
 
 const TasksList: FC<TasksListPropsType> = (props): JSX.Element => {
     const tasksItems: JSX.Element[] | JSX.Element =

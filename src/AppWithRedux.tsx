@@ -61,54 +61,43 @@ function AppWithRedux(): JSX.Element {
         const action = RemoveTaskAC(taskId, todoListId)
         dispatch(action);
 
-    },[])
+    },[dispatch])
 
     const addTask = useCallback((title: string, todoListId: string) => {
         const action = AddTaskAC(title, todoListId)
         dispatch(action);
-    },[])
+    },[dispatch])
 
     const changeTaskStatus = useCallback((taskId: string, isDone: boolean, todoListId: string) => {
         const action = ChangeTaskStatusAC(taskId, isDone, todoListId)
         dispatch(action);
 
-    },[])
+    },[dispatch])
 
     const changeTaskTitle = useCallback((taskId: string, newTitle: string, todoListId: string) => {
         const action = ChangeTaskTitleAC(taskId, newTitle, todoListId)
         dispatch(action);
-    },[])
+    },[dispatch])
 
     const changeTodoListTitle = useCallback((title: string, todoListId: string) => {
         const action = ChangeTodoListTitleAC(title, todoListId)
         dispatch(action);
-    },[])
+    },[dispatch])
 
     const changeTodoListFilter = useCallback((todoListId: string, filter: FilterValuesType) => {
         const action = ChangeTodoListFilterAC(todoListId, filter)
         dispatch(action);
-    },[])
+    },[dispatch])
 
     const removeTodoList = useCallback((todoListId: string) => {
         const action = RemoveTodoListAC(todoListId)
         dispatch(action);
-    },[])
+    },[dispatch])
 
     const addTodoList = useCallback((title: string) => {
         const action = AddTodoListAC(title)
         dispatch(action);
-    }, []);
-
-    const getFilteredTasks = (tasks: Array<TaskType>, filter: FilterValuesType): Array<TaskType> => {
-        switch (filter) {
-            case "active":
-                return tasks.filter(t => t.isDone === false)
-            case "completed":
-                return tasks.filter(t => t.isDone === true)
-            default:
-                return tasks
-        }
-    }
+    }, [dispatch]);
 
 
     const mode = isDarkMode ? "dark" : "light"
@@ -121,7 +110,9 @@ function AppWithRedux(): JSX.Element {
     })
 
     const todoListsComponents = todoLists.map(tl => {
-        const filteredTasks: Array<TaskType> = getFilteredTasks(tasks[tl.id], tl.filter)
+        let allTodoListsTasks = tasks[tl.id]
+        let tasksForTodolist = allTodoListsTasks
+
         return (
             <Grid item>
                 <Paper sx={{p: "20px"}} elevation={8}>
@@ -129,7 +120,7 @@ function AppWithRedux(): JSX.Element {
                         key={tl.id}
                         todoListId={tl.id}
                         title={tl.title}
-                        tasks={filteredTasks}
+                        tasks={tasksForTodolist}
                         filter={tl.filter}
 
                         removeTask={removeTask}
