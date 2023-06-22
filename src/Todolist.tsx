@@ -36,9 +36,9 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
             props.addTask(title, props.todoListId)
     }, [props.addTask, props.todoListId]);
 
-    const handlerCreator = (filter: FilterValuesType) => () => props.changeTodoListFilter(props.todoListId, filter)
+    const handlerCreator = useCallback((filter: FilterValuesType) => () => props.changeTodoListFilter(props.todoListId, filter),[props.changeTodoListFilter, props.todoListId])
     const removeTodoList = () => props.removeTodoList(props.todoListId)
-    const changeTodoListTitle = (title:string) => props.changeTodoListTitle(title, props.todoListId)
+    const changeTodoListTitle = useCallback((title:string) => props.changeTodoListTitle(title, props.todoListId),[props.todoListId, props.changeTodoListTitle ])
 
 
 
