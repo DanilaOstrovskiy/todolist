@@ -1,52 +1,29 @@
-import React, {ChangeEvent, FC, KeyboardEventHandler, useState} from 'react';
-import {TextField} from "@mui/material";
+import React, { ChangeEvent, useState } from 'react';
+import TextField from '@mui/material/TextField';
 
 type EditableSpanPropsType = {
-    title: string
-    changeTitle: (title: string) => void
-    spanClasses?: string
-    inputClasses?: string
+    value: string
+    onChange: (newValue: string) => void
 }
 
-const EditableSpan = React.memo((props: EditableSpanPropsType
-) => {
-    console.log("editablespan")
+export const EditableSpan = React.memo(function (props: EditableSpanPropsType) {
+    console.log('EditableSpan called');
+    let [editMode, setEditMode] = useState(false);
+    let [title, setTitle] = useState(props.value);
 
-    const [editMode, setEditMode] = useState<boolean>(false)
-    const [localTitle, setLocalTitle] = useState(props.title)
-
-    const onEditMode = () => {
-        setEditMode(true)
-        setLocalTitle(props.title)
+    const activateEditMode = () => {
+        setEditMode(true);
+        setTitle(props.value);
     }
-    const offEditMode = () => {
-        setEditMode(false)
-        props.changeTitle(localTitle)
+    const activateViewMode = () => {
+        setEditMode(false);
+        props.onChange(title);
     }
-    const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
-        if (event.key === 'Enter') {
-            offEditMode();
-        }
+    const changeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        setTitle(e.currentTarget.value)
     }
 
-    const changeLocalTitle = (e: ChangeEvent<HTMLInputElement>) => {
-        setLocalTitle(e.currentTarget.value)
-        console.log(localTitle)
-    }
-
-    return (
-        editMode
-            ? <TextField
-                variant={"standard"}
-                value={localTitle}
-                onChange={changeLocalTitle}
-                autoFocus={true}
-                onBlur={offEditMode}
-                onKeyPress={handleKeyDown}
-            />
-            : <span onDoubleClick={onEditMode}
-                    className={props.spanClasses}>{localTitle}</span>
-    );
-})
-
-export default EditableSpan;
+    return editMode
+        ? <TextField value={title} onChange={changeTitle} autoFocus onBlur={activateViewMode}/>
+        : <span onDoubleClick={activateEditMode}>{props.value}</span>
+});

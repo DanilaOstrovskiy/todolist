@@ -1,11 +1,13 @@
-import React, {ChangeEvent, FC, RefObject, useRef, useState, KeyboardEvent, useCallback} from 'react';
-import TasksList from "./TasksList";
-import {FilterValuesType} from "./App";
+import React, {useCallback} from 'react';
 import AddItemForm from "./AddItemForm";
-import EditableSpan from "./EditableSpan";
+
 import {Button, IconButton, Typography} from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import {Task} from "./Task";
+import {FilterValuesType} from "./state/todolists-reducer";
+import {TaskStatuses, TaskType} from "./api/api";
+import {EditableSpan} from "./EditableSpan";
+
 
 
 type TodoListPropsType = {
@@ -16,7 +18,7 @@ type TodoListPropsType = {
 
     removeTask: (taskId: string, todoListId: string) => void
     addTask: (title: string, todoListId: string) => void
-    changeTaskStatus: (taskId: string, isDone: boolean, todoListId: string) => void
+    changeTaskStatus: (taskId: string, status: TaskStatuses, todoListId: string) => void
     changeTaskTitle : (taskId: string, newTitle: string, todoListId: string) => void
     changeTodoListTitle: (title: string, todoListId: string) => void
 
@@ -24,12 +26,6 @@ type TodoListPropsType = {
     removeTodoList: (todoListId: string) => void
 }
 
-export type TaskType = {
-    id: string
-    title: string
-    isDone: boolean
-
-}
 
 const TodoList = React.memo( (props:TodoListPropsType) => {
     const addTask = useCallback((title: string) => {
@@ -42,14 +38,13 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
 
 
 
-
     let tasksForTodolist = props.tasks
 
     if (props.filter === 'active') {
-        tasksForTodolist = props.tasks.filter(t => t.isDone === false)
+        tasksForTodolist = props.tasks.filter(t => t.status === TaskStatuses.New)
     }
     if (props.filter === 'completed') {
-        tasksForTodolist = props.tasks.filter(t => t.isDone === true)
+        tasksForTodolist = props.tasks.filter(t => t.status === TaskStatuses.Completed)
     }
 
     return (
@@ -59,7 +54,7 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
             align={'center'}
             fontWeight={'bold'}
             gutterBottom={true}
-            ><EditableSpan title={props.title} changeTitle={changeTodoListTitle}/>
+            ><EditableSpan value={props.title} onChange={changeTodoListTitle}/>
                 <IconButton
                     size={"small"}
                     onClick={removeTodoList}>
@@ -67,14 +62,6 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
                 </IconButton>
             </Typography>
             <AddItemForm maxLengthUserMessage={15} addNewItem={addTask}/>
-{/*            <TasksList
-                filter={props.filter}
-                changeTaskTitle={props.changeTaskTitle}
-                todoListId={props.todoListId}
-                tasks={props.tasks}
-                removeTask={props.removeTask}
-                changeTaskStatus={props.changeTaskStatus}
-            />*/}
                 <div>                {
                     tasksForTodolist.map(t => <Task
                         task={t}

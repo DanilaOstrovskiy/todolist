@@ -5,14 +5,10 @@ export default {
     title: 'API'
 }
 
-const settings = {
-    withCredentials: true
-}
-
 export const GetTodolists = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
-        ToDoListAPI.getTodoList().then((res)=>{
+        ToDoListAPI.getTodoLists().then((res)=>{
             setState(res.data)
         })
 
@@ -49,7 +45,7 @@ export const UpdateTodolistTitle = () => {
     useEffect(() => {
         const todoListId = "de3b58bd-a542-490d-9564-a92b9bcf172b"
         const title = "My hobby"
-        ToDoListAPI.updateTodoList(todoListId, title)
+        ToDoListAPI.updateTodoListTitle(todoListId, title)
             .then((res) => {
                 setState(res.data)
             }
@@ -58,3 +54,64 @@ export const UpdateTodolistTitle = () => {
 
     return <div>{JSON.stringify(state)}</div>
 }
+
+export const GetTasks = () => {
+    const [state, setState] = useState<any>(null)
+    useEffect(() => {
+        const todoListId = "de3b58bd-a542-490d-9564-a92b9bcf172b"
+        ToDoListAPI.getTasks(todoListId).then((res)=>{
+            setState(res.data)
+        })
+
+    }, [])
+    return <div>{JSON.stringify(state)}</div>
+}
+
+
+export const CreateTask = () => {
+    const [state, setState] = useState<any>(null)
+    useEffect(() => {
+        const todoListId = "de3b58bd-a542-490d-9564-a92b9bcf172b"
+        ToDoListAPI.createTask(todoListId, "Books")
+            .then((res) => {
+                setState(res.data)
+            })
+    }, [])
+
+    return <div>{JSON.stringify(state)}</div>
+}
+
+export const DeleteTask = () => {
+    const [state, setState] = useState<any>(null)
+    useEffect(() => {
+        const todoListId = "de3b58bd-a542-490d-9564-a92b9bcf172b"
+        const taskId = "87fa1b28-23bf-498a-b8de-1a520f7d5fc5"
+        ToDoListAPI.deleteTask(todoListId,taskId)
+            .then((res) => {
+                setState(res.data)
+            })
+
+    }, [])
+
+    return <div>{JSON.stringify(state)}</div>
+}
+
+export const UpdateTaskTitle = () => {
+    const [state, setState] = useState<any>(null)
+    useEffect(() => {
+        const todoListId = "de3b58bd-a542-490d-9564-a92b9bcf172b"
+        const taskId = "874dd783-16db-4556-8f87-0e562014d749"
+        const title = "Updated movie title"
+        ToDoListAPI.updateTask(todoListId,taskId, {title})
+            .then((res) => {
+                    setState(res.data)
+                }
+            )
+    }, [])
+
+    return <div>{JSON.stringify(state)}</div>
+}
+
+
+
+

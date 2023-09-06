@@ -1,6 +1,7 @@
 import React from 'react'
 import {action} from "@storybook/addon-actions";
-import EditableSpan from "./EditableSpan";
+import {EditableSpan} from "./EditableSpan";
+
 
 
 export default {
@@ -11,6 +12,6 @@ export default {
 const changeTitleCallback = action("Status changed")
 
 export const EditableSpanBaseExample = () => {
-    return <EditableSpan title={"Start title"} changeTitle={changeTitleCallback}/>
+    return <EditableSpan  value={"Start title"} onChange={changeTitleCallback}/>
 
 }
