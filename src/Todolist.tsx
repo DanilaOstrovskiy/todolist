@@ -1,12 +1,14 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import AddItemForm from "./AddItemForm";
 
 import {Button, IconButton, Typography} from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import {Task} from "./Task";
 import {FilterValuesType} from "./state/todolists-reducer";
-import {TaskStatuses, TaskType} from "./api/api";
+import {TaskStatuses, TaskType} from "./api/todolists-api";
 import {EditableSpan} from "./EditableSpan";
+import {useAppDispatch} from "./state/store";
+import {getTasksTC} from "./state/tasks-reducer";
 
 
 
@@ -28,6 +30,13 @@ type TodoListPropsType = {
 
 
 const TodoList = React.memo( (props:TodoListPropsType) => {
+    console.log("todolist called")
+    const dispatch = useAppDispatch()
+
+    useEffect(()=>{
+        dispatch(getTasksTC(props.todoListId))
+    }, [])
+
     const addTask = useCallback((title: string) => {
             props.addTask(title, props.todoListId)
     }, [props.addTask, props.todoListId]);
@@ -47,6 +56,7 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
         tasksForTodolist = props.tasks.filter(t => t.status === TaskStatuses.Completed)
     }
 
+
     return (
         <div className={"todolist"}>
             <Typography
@@ -62,7 +72,8 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
                 </IconButton>
             </Typography>
             <AddItemForm maxLengthUserMessage={15} addNewItem={addTask}/>
-                <div>                {
+                <div>
+                    {
                     tasksForTodolist.map(t => <Task
                         task={t}
                         changeTaskStatus={props.changeTaskStatus}

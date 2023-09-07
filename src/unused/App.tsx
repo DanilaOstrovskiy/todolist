@@ -1,44 +1,24 @@
-import React, {useReducer, useState} from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import TodoList from "./TodoList";
+import TodoList from "../TodoList";
 import {v1} from "uuid";
-import AddItemForm from "./AddItemForm";
-import {
-    AppBar,
-    Button, Checkbox,
-    Container,
-    createTheme, CssBaseline, FormControlLabel, FormGroup,
-    Grid,
-    IconButton,
-    Paper,
-    ThemeProvider,
-    Toolbar,
-    Typography
-} from "@mui/material";
+import AddItemForm from "../AddItemForm";
+import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import {Menu} from "@mui/icons-material";
-import {lightGreen, orange} from "@mui/material/colors";
-import {
-    AddTodoListAC,
-    ChangeTodoListFilterAC,
-    ChangeTodoListTitleAC, FilterValuesType,
-    RemoveTodoListAC,
-    todoListsReducer
-} from "./state/todolists-reducer";
-import {AddTaskAC, ChangeTaskStatusAC, ChangeTaskTitleAC, RemoveTaskAC, tasksReducer} from "./state/tasks-reducer";
-import {TaskPriorities, TaskStatuses, TaskType} from "./api/api";
+import {FilterValuesType, TodoListDomainType} from "../state/todolists-reducer";
+import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolists-api";
 
-export type TasksStateType = {
-    [todoListsId: string]: Array<TaskType>
+
+type TasksStateType = {
+    [todoListsId: string]: TaskType[]
 }
 
 
-
-function AppWithReducers(): JSX.Element {
+function App(): JSX.Element {
     //BLL:
     const todoListsId_1 = v1()
     const todoListsId_2 = v1()
-
-    const [todoLists, dispatchToTodolistsReducer] = useReducer(todoListsReducer, [
+    const [todoLists, setTodoLists] = useState<TodoListDomainType[]>([
         {
             id: todoListsId_1,
             title: "What to learn",
@@ -55,7 +35,7 @@ function AppWithReducers(): JSX.Element {
         }
     ])
 
-    const [tasks, dispatchToTasksReducer] = useReducer(tasksReducer,{
+    const [tasks, setTasks] = useState<TasksStateType>({
         [todoListsId_1]: [
             {
                 id: v1(),
@@ -110,48 +90,65 @@ function AppWithReducers(): JSX.Element {
         ]
     })
 
-    //BLL:
-    const [isDarkMode, setDarkMode] = useState<boolean>(false)
-
     const removeTask = (taskId: string, todoListId: string) => {
-        const action = RemoveTaskAC(taskId, todoListId)
-        dispatchToTasksReducer(action);
-
+        setTasks({
+            ...tasks,
+            [todoListId]: tasks[todoListId].filter(t => t.id !== taskId)
+        })
     }
-
     const addTask = (title: string, todoListId: string) => {
-        const action = AddTaskAC(title, todoListId)
-        dispatchToTasksReducer(action);
+        const newTask: TaskType = {
+            id: v1(),
+            title: title,
+            status: TaskStatuses.New,
+            todoListId: todoListId,
+            description: "",
+            startDate: "",
+            deadline: "",
+            addedDate: "",
+            order: 0,
+            priority: TaskPriorities.Low
+        }
+        const tasksForUpdate = tasks[todoListId]
+        const updatedTasks = [newTask, ...tasksForUpdate]
+        const copyTasks = {...tasks}
+        copyTasks[todoListId] = updatedTasks
+        setTasks(copyTasks)
+
+        setTasks({...tasks, [todoListId]: [newTask, ...tasksForUpdate]})
     }
-
     const changeTaskStatus = (taskId: string, status: TaskStatuses, todoListId: string) => {
-        const action = ChangeTaskStatusAC(taskId, status, todoListId)
-        dispatchToTasksReducer(action);
-
+        setTasks({...tasks, [todoListId]: tasks[todoListId].map(t => t.id === taskId ? {...t, status: status } : t)})
     }
     const changeTaskTitle = (taskId: string, newTitle: string, todoListId: string) => {
-        const action = ChangeTaskTitleAC(taskId, newTitle, todoListId)
-        dispatchToTasksReducer(action);
+        setTasks({...tasks, [todoListId]: tasks[todoListId].map(t => t.id === taskId ? {...t, title: newTitle} : t)})
     }
-
 
     const changeTodoListTitle = (title: string, todoListId: string) => {
-        const action = ChangeTodoListTitleAC(title, todoListId)
-        dispatchToTodolistsReducer(action);
+        setTodoLists(todoLists.map(tl => tl.id === todoListId ? {...tl, title: title} : tl))
     }
     const changeTodoListFilter = (todoListId: string, filter: FilterValuesType) => {
-        const action = ChangeTodoListFilterAC(todoListId, filter)
-        dispatchToTodolistsReducer(action);
+        setTodoLists(todoLists.map(tl => tl.id === todoListId ? {...tl, filter: filter} : tl))
     }
     const removeTodoList = (todoListId: string) => {
-        const action = RemoveTodoListAC(todoListId)
-        dispatchToTasksReducer(action)
-        dispatchToTodolistsReducer(action);
+        setTodoLists(todoLists.filter(tl => tl.id !== todoListId))
+        const copyTasks = {...tasks}
+        delete copyTasks[todoListId]
+        setTasks(copyTasks)
+        //delete tasks[todoListId]
     }
     const addTodoList = (title: string) => {
-        const action = AddTodoListAC(title)
-        dispatchToTasksReducer(action);
-        dispatchToTodolistsReducer(action);
+        const newTodoListId = v1()
+        const newTodoList: TodoListDomainType = {
+            id: newTodoListId,
+            title: title,
+            filter: 'all',
+            addedDate: "",
+            order: 0
+
+        }
+        setTodoLists([...todoLists, newTodoList])
+        setTasks({...tasks, [newTodoListId]: []})
     }
 
     const getFilteredTasks = (tasks: TaskType[], filter: FilterValuesType): TaskType[] => {
@@ -166,17 +163,8 @@ function AppWithReducers(): JSX.Element {
     }
 
 
-    const mode = isDarkMode ? "dark" : "light"
-    const newTheme = createTheme({
-        palette: {
-            mode: mode,
-            primary: lightGreen,
-            secondary: orange
-        }
-    })
-
     const todoListsComponents = todoLists.map(tl => {
-        const filteredTasks: Array<TaskType> = getFilteredTasks(tasks[tl.id], tl.filter)
+        const filteredTasks: TaskType[] = getFilteredTasks(tasks[tl.id], tl.filter)
         return (
             <Grid item>
                 <Paper sx={{p: "20px"}} elevation={8}>
@@ -204,8 +192,6 @@ function AppWithReducers(): JSX.Element {
 
     //UI:
     return (
-        <ThemeProvider theme={newTheme}>
-            <CssBaseline />
             <div className="App">
                 <AppBar position="static">
                     <Toolbar>
@@ -221,13 +207,6 @@ function AppWithReducers(): JSX.Element {
                         <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                             TodoLists
                         </Typography>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox
-                                    onChange={(e)=>setDarkMode(e.currentTarget.checked)} />}
-                                label={isDarkMode ? "Light mode" : "Dark mode"}
-                            />
-                        </FormGroup>
                         <Button color="inherit">Login</Button>
                     </Toolbar>
                 </AppBar>
@@ -240,8 +219,7 @@ function AppWithReducers(): JSX.Element {
                     </Grid>
                 </Container>
             </div>
-       </ThemeProvider >
     );
 }
 
-export default AppWithReducers;
+export default App;

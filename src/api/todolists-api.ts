@@ -1,5 +1,4 @@
-import axios from "axios";
-
+import axios, {AxiosResponse} from "axios";
 
 
 const instance = axios.create(
@@ -8,7 +7,7 @@ const instance = axios.create(
         withCredentials: true,
     })
 
-export const ToDoListAPI = {
+export const todoListAPI = {
     getTodoLists() {
         return instance.get<TodoListType[]>("todo-lists")
     },
@@ -32,8 +31,8 @@ export const ToDoListAPI = {
         return instance.delete<ResponseType>(`/todo-lists/${todoListId}/tasks/${taskId}`)
 
     },
-    updateTask(todoListId: string, taskId: string, model: UpdateTaskType) {
-        return instance.put<ResponseType>(` /todo-lists/${todoListId}/tasks/${taskId}`, {model})
+    updateTask(todoListId: string, taskId: string, model: UpdateTaskModelType) {
+        return instance.put<ResponseType<{item: TaskType}>, AxiosResponse<ResponseType<{ item: TaskType }>>, UpdateTaskModelType>(` /todo-lists/${todoListId}/tasks/${taskId}`, model)
 
     }
 
@@ -81,13 +80,13 @@ export type TaskType = {
 
 }
 
-type UpdateTaskType = {
+export type UpdateTaskModelType = {
     title: string
-    /*    description:string
-        status: number
-        priority: number
-        startDate: string
-        deadline: string*/
+    description: string
+    status: number
+    priority: number
+    startDate: string
+    deadline: string
 }
 
 type GetTasksResponse = {

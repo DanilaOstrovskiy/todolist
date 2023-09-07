@@ -5,7 +5,7 @@ import {combineReducers, createStore} from "redux";
 import {tasksReducer} from "../state/tasks-reducer";
 import {todoListsReducer} from "../state/todolists-reducer";
 import {v1} from "uuid";
-import {TaskPriorities, TaskStatuses} from "../api/api";
+import {TaskPriorities, TaskStatuses} from "../api/todolists-api";
 
 const rootReducer = combineReducers({
     task: tasksReducer,
@@ -13,21 +13,22 @@ const rootReducer = combineReducers({
 })
 
 const initialGlobalState: AppRootStateType = {
-    todoLists: [{ id: "todoListId_1", title: "What to learn", filter: "all", addedDate: "", order: 0 },
+    todoLists: [
+        { id: "todoListId_1", title: "What to learn", filter: "all", addedDate: "", order: 0 },
         { id: "todoListId_2", title: "What to buy", filter: "all", addedDate: "", order: 0 }
     ],
     tasks: {
         ["todoListsId_1"]: [
-            {id: v1(), title: "HTML & CSS", status: TaskStatuses.Completed, addedDate: "",deadline:"",
-                todoListId: "todoListsId_1", description:"",order:0, priority: TaskPriorities.Low, startDate:""},
-            {id: v1(), title: "React & Redux", status: TaskStatuses.New, addedDate: "",deadline:"",
-                todoListId: "todoListsId_1", description:"",order:0, priority: TaskPriorities.Low, startDate:""},
+            {id: v1(), title: "HTML & CSS", status: TaskStatuses.Completed, addedDate: "", deadline: "",
+                todoListId: "todoListsId_1", description: "", order:0, priority: TaskPriorities.Low, startDate: ""},
+            {id: v1(), title: "React & Redux", status: TaskStatuses.New, addedDate: "", deadline: "",
+                todoListId: "todoListsId_1", description: "", order:0, priority: TaskPriorities.Low, startDate: ""},
         ],
         ["todoListsId_2"]: [
             {id: v1(), title: "Milk", status: TaskStatuses.Completed, addedDate: "",deadline:"",
-                todoListId: "todoListsId_2", description:"",order:0, priority: TaskPriorities.Low, startDate:""},
-            {id: v1(), title: "Bread", status: TaskStatuses.New, addedDate: "",deadline:"",
-                todoListId: "todoListsId_2", description:"",order:0, priority: TaskPriorities.Low, startDate:""},
+                todoListId: "todoListsId_2", description: "", order:0, priority: TaskPriorities.Low, startDate: ""},
+            {id: v1(), title: "Bread", status: TaskStatuses.New, addedDate: "", deadline: "",
+                todoListId: "todoListsId_2", description: "", order:0, priority: TaskPriorities.Low, startDate: ""},
         ]
     }
 }

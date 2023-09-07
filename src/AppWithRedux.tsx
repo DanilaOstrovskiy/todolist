@@ -1,5 +1,5 @@
-import React, {useCallback, useState} from 'react';
-import './App.css';
+import React, {useCallback, useEffect, useState} from 'react';
+import './unused/App.css';
 import TodoList from "./TodoList";
 import AddItemForm from "./AddItemForm";
 import {
@@ -25,12 +25,13 @@ import {
     ChangeTodoListFilterAC,
     ChangeTodoListTitleAC,
     FilterValuesType,
-    RemoveTodoListAC, TodoListDomainType
+    getTodoListsTC,
+    RemoveTodoListAC,
+    TodoListDomainType
 } from "./state/todolists-reducer";
-import {AddTaskAC, ChangeTaskStatusAC, ChangeTaskTitleAC, RemoveTaskAC} from "./state/tasks-reducer";
-import {useDispatch, useSelector} from "react-redux";
-import {AppRootStateType} from "./state/store";
-import {TaskStatuses, TaskType} from "./api/api";
+import {changeTaskStatusAC, changeTaskTitleAC, createTaskTC, deleteTaskTC, updateTaskTC} from "./state/tasks-reducer";
+import {useAppDispatch, useAppSelector} from "./state/store";
+import {TaskStatuses, TaskType} from "./api/todolists-api";
 
 
 export type TasksStateType = {
@@ -38,56 +39,56 @@ export type TasksStateType = {
 }
 
 
-
 function AppWithRedux(): JSX.Element {
-    const todoLists = useSelector<AppRootStateType,TodoListDomainType[] >(state => state.todoLists)
-    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
-    const dispatch = useDispatch();
-
-    //BLL:
     const [isDarkMode, setDarkMode] = useState<boolean>(false)
 
-    const removeTask = useCallback((taskId: string, todoListId: string) => {
-        const action = RemoveTaskAC(taskId, todoListId)
-        dispatch(action);
+    const todoLists = useAppSelector<TodoListDomainType[] >(state => state.todoLists)
+    const tasks = useAppSelector<TasksStateType>(state => state.tasks)
+    const dispatch = useAppDispatch();
 
-    },[dispatch])
+    useEffect(() => {
+        dispatch(getTodoListsTC())
+    },[])
+
+
+
+    const removeTask = useCallback(( todoListId: string, taskId: string) => {
+        dispatch(deleteTaskTC(taskId, todoListId))
+    },[])
 
     const addTask = useCallback((title: string, todoListId: string) => {
-        const action = AddTaskAC(title, todoListId)
-        dispatch(action);
-    },[dispatch])
+        dispatch(createTaskTC(todoListId, title));
+    },[])
 
     const changeTaskStatus = useCallback((taskId: string, status: TaskStatuses, todoListId: string) => {
-        const action = ChangeTaskStatusAC(taskId, status, todoListId)
-        dispatch(action);
+        dispatch(updateTaskTC(todoListId,taskId,status));
 
-    },[dispatch])
+    },[])
 
     const changeTaskTitle = useCallback((taskId: string, newTitle: string, todoListId: string) => {
-        const action = ChangeTaskTitleAC(taskId, newTitle, todoListId)
+        const action = changeTaskTitleAC(taskId, newTitle, todoListId)
         dispatch(action);
-    },[dispatch])
+    },[])
 
     const changeTodoListTitle = useCallback((title: string, todoListId: string) => {
         const action = ChangeTodoListTitleAC(title, todoListId)
         dispatch(action);
-    },[dispatch])
+    },[])
 
     const changeTodoListFilter = useCallback((todoListId: string, filter: FilterValuesType) => {
         const action = ChangeTodoListFilterAC(todoListId, filter)
         dispatch(action);
-    },[dispatch])
+    },[])
 
     const removeTodoList = useCallback((todoListId: string) => {
         const action = RemoveTodoListAC(todoListId)
         dispatch(action);
-    },[dispatch])
+    },[])
 
     const addTodoList = useCallback((title: string) => {
         const action = AddTodoListAC(title)
         dispatch(action);
-    }, [dispatch]);
+    }, []);
 
 
     const mode = isDarkMode ? "dark" : "light"
