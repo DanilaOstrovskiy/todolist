@@ -1,14 +1,14 @@
 import React, {useCallback, useEffect} from 'react';
-import AddItemForm from "./AddItemForm";
+import AddItemForm from "../../../components/AddItemForm/AddItemForm";
 
 import {Button, IconButton, Typography} from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import {Task} from "./Task";
-import {FilterValuesType} from "./state/todolists-reducer";
-import {TaskStatuses, TaskType} from "./api/todolists-api";
-import {EditableSpan} from "./EditableSpan";
-import {useAppDispatch} from "./state/store";
-import {getTasksTC} from "./state/tasks-reducer";
+import {Task} from "./Task/Task";
+import {FilterValuesType} from "../todolists-reducer";
+import {TaskStatuses, TaskType} from "../../../api/todolists-api";
+import {EditableSpan} from "../../../components/EditabeSpan/EditableSpan";
+import {useAppDispatch} from "../../../app/store";
+import {getTasksTC} from "../tasks-reducer";
 
 
 
