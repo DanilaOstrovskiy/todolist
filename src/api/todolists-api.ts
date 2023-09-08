@@ -5,14 +5,17 @@ const instance = axios.create(
     {
         baseURL: "https://social-network.samuraijs.com/api/1.1/",
         withCredentials: true,
+        headers: {
+            "API-KEY": "ae177dec-2b8d-47ab-9ea4-bd7ef07c857c"
+        }
     })
 
 export const todoListAPI = {
     getTodoLists() {
         return instance.get<TodoListType[]>("todo-lists")
     },
-    createTodoList() {
-        return instance.post<ResponseType<{ item: TodoListType }>>("todo-lists", {title: "Dimych todolist"})
+    createTodoList(title: string) {
+        return instance.post<ResponseType<{ item: TodoListType }>, AxiosResponse<ResponseType<{ item: TodoListType }>>, {title: string}>("todo-lists", {title})
     },
     deleteTodoList(todoListId: string) {
         return instance.delete<ResponseType>(`todo-lists/${todoListId}`)
@@ -32,8 +35,7 @@ export const todoListAPI = {
 
     },
     updateTask(todoListId: string, taskId: string, model: UpdateTaskModelType) {
-        return instance.put<ResponseType<{item: TaskType}>, AxiosResponse<ResponseType<{ item: TaskType }>>, UpdateTaskModelType>(` /todo-lists/${todoListId}/tasks/${taskId}`, model)
-
+        return instance.put<ResponseType<{item: TaskType}>, AxiosResponse<ResponseType<{ item: TaskType }>>, UpdateTaskModelType>(`/todo-lists/${todoListId}/tasks/${taskId}`, model);
     }
 
 }
@@ -47,7 +49,8 @@ export type TodoListType = {
 
 type ResponseType<T = {}> = {  //по дефолту будет брать пустой объект
     resultCode: number
-    messages: [],
+    messages: String[],
+    fieldsErrors: String[],
     data: T
 }
 
