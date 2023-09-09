@@ -24,14 +24,16 @@ function App(): JSX.Element {
             title: "What to learn",
             filter: "all",
             addedDate: ' ',
-            order: 0
+            order: 0,
+            entityStatus: "idle"
         },
         {
             id: todoListsId_2,
             title: "What to buy",
             filter: "all",
             addedDate: '',
-            order: 0
+            order: 0,
+            entityStatus: "idle"
         }
     ])
 
@@ -144,7 +146,8 @@ function App(): JSX.Element {
             title: title,
             filter: 'all',
             addedDate: "",
-            order: 0
+            order: 0,
+            entityStatus: "idle"
 
         }
         setTodoLists([...todoLists, newTodoList])
@@ -174,6 +177,7 @@ function App(): JSX.Element {
                         title={tl.title}
                         tasks={filteredTasks}
                         filter={tl.filter}
+                        entityStatus={tl.entityStatus}
 
                         removeTask={removeTask}
                         addTask={addTask}

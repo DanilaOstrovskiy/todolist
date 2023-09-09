@@ -5,6 +5,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 type AddItemFormType = {
     maxLengthUserMessage: number
     addNewItem: (title: string) => void
+    disabled?: boolean
 }
 
 const AddItemForm = React.memo( (props: AddItemFormType) => {
@@ -39,8 +40,6 @@ const AddItemForm = React.memo( (props: AddItemFormType) => {
 
     return (
         <div>
-            {/*<input ref={addTaskInput}/>*/}
-            {/*<button onClick={addTask}>+</button>*/}
             <TextField
                 size={"small"}
                 value={title}
@@ -50,6 +49,7 @@ const AddItemForm = React.memo( (props: AddItemFormType) => {
                 className={inputErrorClasses}
                 error={isInputShowError}
                 helperText={helperText}
+                disabled={props.disabled}
             />
 
 
@@ -59,8 +59,6 @@ const AddItemForm = React.memo( (props: AddItemFormType) => {
                 onClick={addItem}>
                 <AddCircleOutlineIcon />
             </IconButton>
-{/*            {userMaxLengthMessage}
-            {userErrorMessage}*/}
         </div>
     );
 } );

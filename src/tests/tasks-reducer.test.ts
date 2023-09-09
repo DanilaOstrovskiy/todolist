@@ -1,6 +1,6 @@
-import {TaskType} from '../api/todolists-api';
+import {TasksStateType, TaskType} from '../api/todolists-api';
 import {ActionsType, addTaskAC, removeTaskAC, setTasksAC, tasksReducer} from "../features/TodolistsList/tasks-reducer";
-import {TasksStateType} from "../app/App";
+
 
 
 // Test the tasksReducer

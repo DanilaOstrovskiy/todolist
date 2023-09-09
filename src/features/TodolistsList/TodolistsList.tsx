@@ -5,16 +5,16 @@ import {
     changeTodoListFilterAC,
     changeTodoListTitleTC,
     FilterValuesType,
-    getTodoListsTC,
+    fetchTodoListsTC,
     removeTodoListTC,
     TodoListDomainType
 } from "./todolists-reducer";
-import {createTaskTC, deleteTaskTC, updateTaskTC} from "./tasks-reducer";
-import {TaskStatuses} from "../../api/todolists-api";
+import {addTaskTC, deleteTaskTC, updateTaskTC} from "./tasks-reducer";
+import {TasksStateType, TaskStatuses} from "../../api/todolists-api";
 import {Grid, Paper} from "@mui/material";
 import AddItemForm from "../../components/AddItemForm/AddItemForm";
 import TodoList from "./Todolist/TodoList";
-import {TasksStateType} from "../../app/App";
+
 
 export const TodoListsList: React.FC = () => {
 
@@ -23,7 +23,7 @@ export const TodoListsList: React.FC = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(getTodoListsTC())
+        dispatch(fetchTodoListsTC())
     }, [])
 
     const removeTask = useCallback((todoListId: string, taskId: string) => {
@@ -31,7 +31,7 @@ export const TodoListsList: React.FC = () => {
     }, [])
 
     const addTask = useCallback((title: string, todoListId: string) => {
-        dispatch(createTaskTC(todoListId, title));
+        dispatch(addTaskTC(todoListId, title));
     }, [])
 
     const changeTaskStatus = useCallback((taskId: string, status: TaskStatuses, todoListId: string) => {
@@ -79,6 +79,7 @@ export const TodoListsList: React.FC = () => {
                                     key={tl.id}
                                     todoListId={tl.id}
                                     title={tl.title}
+                                    entityStatus = {tl.entityStatus}
                                     tasks={tasksForTodolist}
                                     filter={tl.filter}
                                     removeTask={removeTask}

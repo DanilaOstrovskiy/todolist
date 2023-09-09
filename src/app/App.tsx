@@ -1,18 +1,24 @@
 import React from 'react';
-import {AppBar, Button, Container, IconButton, Toolbar, Typography} from "@mui/material";
-import {Menu} from "@mui/icons-material";
-import {TaskType} from "../api/todolists-api";
+import AppBar from "@mui/material/AppBar";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/icons-material/Menu";
 import {TodoListsList} from "../features/TodolistsList/TodolistsList";
-
-
-export type TasksStateType = {
-    [todoListsId: string]: TaskType[]
-}
+import LinearProgress from "@mui/material/LinearProgress";
+import {useAppSelector} from "./store";
+import {RequestStatusType} from "./app-reducer";
+import CustomizedSnackbars from "../components/errorSnackbar";
 
 
 function App() {
+    const status = useAppSelector<RequestStatusType>((state)=> state.app.status)
+
     return (
         <div className="App">
+            <CustomizedSnackbars/>
             <AppBar position="static">
                 <Toolbar>
                     <IconButton edge="start" color="inherit" aria-label="menu">
@@ -23,10 +29,12 @@ function App() {
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
+                {status === "loading" && <LinearProgress color="secondary"/>}
             </AppBar>
             <Container fixed>
                 <TodoListsList/>
             </Container>
+
         </div>
     );
 }

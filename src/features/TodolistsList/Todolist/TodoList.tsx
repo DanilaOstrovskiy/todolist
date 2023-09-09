@@ -8,15 +8,18 @@ import {FilterValuesType} from "../todolists-reducer";
 import {TaskStatuses, TaskType} from "../../../api/todolists-api";
 import {EditableSpan} from "../../../components/EditabeSpan/EditableSpan";
 import {useAppDispatch} from "../../../app/store";
-import {getTasksTC} from "../tasks-reducer";
+import {fetchTasksTC} from "../tasks-reducer";
+import {RequestStatusType} from "../../../app/app-reducer";
 
 
 
 type TodoListPropsType = {
     todoListId: string
     title: string
+    entityStatus: RequestStatusType
     filter: FilterValuesType
     tasks: TaskType[]
+
 
     removeTask: (taskId: string, todoListId: string) => void
     addTask: (title: string, todoListId: string) => void
@@ -34,7 +37,7 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
     const dispatch = useAppDispatch()
 
     useEffect(()=>{
-        dispatch(getTasksTC(props.todoListId))
+        dispatch(fetchTasksTC(props.todoListId))
     }, [])
 
     const addTask = useCallback((title: string) => {
@@ -67,11 +70,12 @@ const TodoList = React.memo( (props:TodoListPropsType) => {
             ><EditableSpan value={props.title} onChange={changeTodoListTitle}/>
                 <IconButton
                     size={"small"}
-                    onClick={removeTodoList}>
+                    onClick={removeTodoList}
+                disabled ={props.entityStatus === "loading"}>
                     <HighlightOffIcon />
                 </IconButton>
             </Typography>
-            <AddItemForm maxLengthUserMessage={15} addNewItem={addTask}/>
+            <AddItemForm maxLengthUserMessage={15} addNewItem={addTask} disabled={props.entityStatus === "loading"}/>
                 <div>
                     {
                     tasksForTodolist.map(t => <Task

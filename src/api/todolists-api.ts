@@ -40,6 +40,11 @@ export const todoListAPI = {
 
 }
 
+export type TasksStateType = {
+    [todoListsId: string]: TaskType[]
+}
+
+
 export type TodoListType = {
     id: string
     addedDate: string
@@ -47,10 +52,10 @@ export type TodoListType = {
     title: string
 }
 
-type ResponseType<T = {}> = {  //по дефолту будет брать пустой объект
+export type ResponseType<T = {}> = {  //по дефолту будет брать пустой объект
     resultCode: number
-    messages: String[],
-    fieldsErrors: String[],
+    messages: string[],
+    fieldsErrors: string[],
     data: T
 }
 
@@ -67,6 +72,12 @@ export enum TaskPriorities {
     Hi = 2,
     Urgently = 3,
     later = 4
+}
+
+export enum RESULT_CODE {
+    SUCCESS=0,
+    FAILED=1,
+    CAPTCHA=10
 }
 
 export type TaskType = {
@@ -90,6 +101,16 @@ export type UpdateTaskModelType = {
     priority: number
     startDate: string
     deadline: string
+}
+
+
+export type UpdateDomainTaskModelType = {
+    title?: string
+    description?: string
+    status?: number
+    priority?: number
+    startDate?: string
+    deadline?: string
 }
 
 type GetTasksResponse = {
