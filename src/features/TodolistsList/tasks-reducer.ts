@@ -90,6 +90,10 @@ export const fetchTasksTC = (todoListId: string) => (dispatch: Dispatch<ActionsT
             dispatch(setTasksAC(res.data.items, todoListId))
             dispatch(setAppStatusAC("succeeded"))
         })
+        .catch((error: AxiosError<ErrorType>) => {
+            handleServerNetwotkError(dispatch, error.message)
+            dispatch(setAppStatusAC("failed"))
+        });
 }
 
 
@@ -99,6 +103,10 @@ export const deleteTaskTC = (taskId: string, todoListId: string) => (dispatch: D
             dispatch(removeTaskAC(taskId, todoListId))
             dispatch(setAppStatusAC("succeeded"))
         })
+        .catch((error: AxiosError<ErrorType>) => {
+            handleServerNetwotkError(dispatch, error.message)
+            dispatch(setAppStatusAC("failed"))
+        });
 }
 
 export const addTaskTC = (todoListId: string, title: string) => async (dispatch: Dispatch<ActionsType>, getState: any, extraArg: any) => {
@@ -123,7 +131,7 @@ export const addTaskTC = (todoListId: string, title: string) => async (dispatch:
 
 }
 
-type ErrorType = {
+export type ErrorType = {
     "statusCode": 0.
     "messages": [
         {"message": "string",
@@ -166,7 +174,7 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
                     }
                 }).catch((error: AxiosError<ErrorType>)  => {
                     error.response?.data
-                //handleServerNetwotkError(dispatch, error.message)
+                handleServerNetwotkError(dispatch, error.message)
             })
         }
 
