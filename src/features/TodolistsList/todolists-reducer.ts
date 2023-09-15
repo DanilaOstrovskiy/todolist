@@ -63,7 +63,6 @@ export const fetchTodoListsTC = () => async (dispatch: Dispatch<ActionsType>, ge
         dispatch(setTodoListsAC(res.data));
         dispatch(setAppStatusAC("succeeded"));
     } catch (error) {
-        // Handle the error here, e.g., dispatch an error action or log the error.
         const axiosError = error as AxiosError;
         handleServerNetwotkError(dispatch, axiosError.message)
         dispatch(setAppStatusAC("failed"));
@@ -77,7 +76,6 @@ export const addTodoListTC = (title: string) => async (dispatch: Dispatch<Action
         dispatch(addTodoListAC(res.data.data.item));
         dispatch(setAppStatusAC("succeeded"));
     } catch (error) {
-        // Handle the error here, e.g., dispatch an error action or log the error.
         const axiosError = error as AxiosError;
         handleServerNetwotkError(dispatch, axiosError.message)
         dispatch(setAppStatusAC("failed"));
@@ -104,7 +102,6 @@ export const removeTodoListTC = (todoListId: string) => async (dispatch: Dispatc
             dispatch(setTodoListsEntityStatusAC(todoListId, "failed"));
         }
     } catch (error) {
-        // Handle the error here, e.g., dispatch an error action or log the error.
         const axiosError = error as AxiosError;
         handleServerNetwotkError(dispatch, axiosError.message)
         dispatch(setAppStatusAC("failed"));
@@ -120,7 +117,6 @@ export const changeTodoListTitleTC = (todoListId: string, title: string) => asyn
         dispatch(setAppStatusAC("succeeded"));
     } catch (error) {
         const axiosError = error as AxiosError;
-        // Handle the error here, e.g., dispatch an error action or log the error.
         handleServerNetwotkError(dispatch, axiosError.message);
         dispatch(setAppStatusAC("failed"));
     }

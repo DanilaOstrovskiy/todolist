@@ -11,10 +11,12 @@ import LinearProgress from "@mui/material/LinearProgress";
 import {useAppSelector} from "./store";
 import {RequestStatusType} from "./app-reducer";
 import CustomizedSnackbars from "../components/errorSnackbar";
+import {Login} from "../features/Login/Login";
+import {Navigate, Route, Routes} from "react-router-dom";
 
 
 function App() {
-    const status = useAppSelector<RequestStatusType>((state)=> state.app.status)
+    const status = useAppSelector<RequestStatusType>((state) => state.app.status)
 
     return (
         <div className="App">
@@ -32,7 +34,12 @@ function App() {
                 {status === "loading" && <LinearProgress color="secondary"/>}
             </AppBar>
             <Container fixed>
-                <TodoListsList/>
+                <Routes>
+                    <Route path={"/"} element={<TodoListsList/>}/>
+                    <Route path={"/login"} element={<Login/>}/>
+                    <Route path={"/404"} element={<h1>404: PAGE NOT FOUND</h1>}/>
+                    <Route path={"*"} element={<Navigate to={"/404"}/>}/>
+                </Routes>
             </Container>
 
         </div>
