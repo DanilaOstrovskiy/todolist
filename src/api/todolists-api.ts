@@ -1,4 +1,5 @@
 import axios, {AxiosResponse} from "axios";
+import {LoginDataType} from "../features/Login/Login";
 
 
 const instance = axios.create(
@@ -9,6 +10,19 @@ const instance = axios.create(
             "API-KEY": "ae177dec-2b8d-47ab-9ea4-bd7ef07c857c"
         }
     })
+
+export const authAPI = {
+    me() {
+        return instance.get<ResponseType<UserType>, AxiosResponse<ResponseType<UserType>>>("auth/me")
+    },
+    login(loginData: LoginDataType) {
+        return instance.post<ResponseType<{ userId: number }>, AxiosResponse<ResponseType<{userId: number}>>, LoginDataType>("auth/login", loginData)
+    },
+    logOut() {
+        return instance.delete<ResponseType>("auth/login")
+    }
+}
+
 
 export const todoListAPI = {
     getTodoLists() {
@@ -117,6 +131,12 @@ type GetTasksResponse = {
     items: TaskType[]
     totalCount: number
     error: string | null
+}
+
+type UserType = {
+    id: number,
+    email: string
+    login: string
 }
 
 

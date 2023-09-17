@@ -3,9 +3,9 @@ import {Dispatch} from "redux";
 import {
     RequestStatusType,
     setAppErrorAC,
-    SetAppErrorACType,
+    SetAppErrorActionType,
     setAppStatusAC,
-    SetAppStatusACType
+    SetAppStatusActionType
 } from "../../app/app-reducer";
 import {handleServerNetwotkError} from "../../utils/error-utils";
 import {AxiosError} from "axios";
@@ -64,7 +64,7 @@ export const fetchTodoListsTC = () => async (dispatch: Dispatch<ActionsType>, ge
         dispatch(setAppStatusAC("succeeded"));
     } catch (error) {
         const axiosError = error as AxiosError;
-        handleServerNetwotkError(dispatch, axiosError.message)
+        handleServerNetwotkError(axiosError, dispatch)
         dispatch(setAppStatusAC("failed"));
     }
 }
@@ -77,7 +77,7 @@ export const addTodoListTC = (title: string) => async (dispatch: Dispatch<Action
         dispatch(setAppStatusAC("succeeded"));
     } catch (error) {
         const axiosError = error as AxiosError;
-        handleServerNetwotkError(dispatch, axiosError.message)
+        handleServerNetwotkError(axiosError, dispatch)
         dispatch(setAppStatusAC("failed"));
     }
 }
@@ -103,7 +103,7 @@ export const removeTodoListTC = (todoListId: string) => async (dispatch: Dispatc
         }
     } catch (error) {
         const axiosError = error as AxiosError;
-        handleServerNetwotkError(dispatch, axiosError.message)
+        handleServerNetwotkError(axiosError, dispatch)
         dispatch(setAppStatusAC("failed"));
         dispatch(setTodoListsEntityStatusAC(todoListId, "failed"));
     }
@@ -117,7 +117,7 @@ export const changeTodoListTitleTC = (todoListId: string, title: string) => asyn
         dispatch(setAppStatusAC("succeeded"));
     } catch (error) {
         const axiosError = error as AxiosError;
-        handleServerNetwotkError(dispatch, axiosError.message);
+        handleServerNetwotkError(axiosError, dispatch);
         dispatch(setAppStatusAC("failed"));
     }
 }
@@ -135,8 +135,8 @@ export type ActionsType = SetTodoListAT
     | ReturnType<typeof changeTodoListTitleAC>
     | ReturnType<typeof changeTodoListFilterAC>
     | ReturnType<typeof setTodoListsEntityStatusAC>
-    | SetAppStatusACType
-    | SetAppErrorACType
+    | SetAppStatusActionType
+    | SetAppErrorActionType
 
 
 const initialState: TodoListDomainType[] = []

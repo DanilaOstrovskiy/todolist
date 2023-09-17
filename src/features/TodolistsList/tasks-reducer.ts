@@ -10,7 +10,7 @@ import {Dispatch} from "redux";
 
 import {AppRootStateType} from "../../app/store";
 import {AddTodoListAT, RemoveTodoListAT, SetTodoListAT} from "./todolists-reducer";
-import {setAppErrorAC, SetAppErrorACType, setAppStatusAC, SetAppStatusACType} from "../../app/app-reducer";
+import {setAppErrorAC, SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from "../../app/app-reducer";
 import {handleServerAppError, handleServerNetwotkError} from "../../utils/error-utils";
 import axios, {AxiosError} from "axios";
 import {Simulate} from "react-dom/test-utils";
@@ -91,7 +91,7 @@ export const fetchTasksTC = (todoListId: string) => (dispatch: Dispatch<ActionsT
             dispatch(setAppStatusAC("succeeded"))
         })
         .catch((error: AxiosError<ErrorType>) => {
-            handleServerNetwotkError(dispatch, error.message)
+            handleServerNetwotkError(error, dispatch)
             dispatch(setAppStatusAC("failed"))
         });
 }
@@ -104,7 +104,7 @@ export const deleteTaskTC = (taskId: string, todoListId: string) => (dispatch: D
             dispatch(setAppStatusAC("succeeded"))
         })
         .catch((error: AxiosError<ErrorType>) => {
-            handleServerNetwotkError(dispatch, error.message)
+            handleServerNetwotkError(error, dispatch)
             dispatch(setAppStatusAC("failed"))
         });
 }
@@ -118,14 +118,14 @@ export const addTaskTC = (todoListId: string, title: string) => async (dispatch:
             dispatch(addTaskAC(res.data.data.item, todoListId))
             dispatch(setAppStatusAC("succeeded"))
         } else {
-            handleServerAppError(dispatch, res.data)
+            handleServerAppError(res.data, dispatch)
         }
     } catch (error) {
         if (axios.isAxiosError<ErrorType>(error)) {
             const res = error.response?.data.messages.map((error) => error.field)
-            handleServerNetwotkError(dispatch, error.message)
+            handleServerNetwotkError(error, dispatch)
         } else {
-            handleServerNetwotkError(dispatch, (error as Error).message)
+            handleServerNetwotkError((error as Error), dispatch)
         }
     }
 
@@ -174,7 +174,7 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
                     }
                 }).catch((error: AxiosError<ErrorType>)  => {
                     error.response?.data
-                handleServerNetwotkError(dispatch, error.message)
+                handleServerNetwotkError(error, dispatch)
             })
         }
 
@@ -190,5 +190,5 @@ export type ActionsType =
     | AddTodoListAT
     | RemoveTodoListAT
     | SetTodoListAT
-    | SetAppStatusACType
-    | SetAppErrorACType
+    | SetAppStatusActionType
+    | SetAppErrorActionType
